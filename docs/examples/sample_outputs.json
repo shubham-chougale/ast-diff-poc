@@ -1,0 +1,99 @@
+{
+  "sample1_example": {
+    "source_file": "tests/fixtures/sample1/source.properties",
+    "target_file": "tests/fixtures/sample1/target.properties",
+    "changes": [
+      {
+        "type": "MOVED",
+        "key": "FND_MULTIROW_NUMBER_OF_ROWS_PER_PAGE",
+        "source_line": 1,
+        "target_line": 2,
+        "source_value": "1",
+        "target_value": "1"
+      },
+      {
+        "type": "MOVED",
+        "key": "ACT_MULTIROW_NUMBER_OF_ROWS_PER_PAGE",
+        "source_line": 2,
+        "target_line": 1,
+        "source_value": "1",
+        "target_value": "1"
+      },
+      {
+        "type": "MODIFIED",
+        "key": "FND_MULTIROW_NUMBER_OF_ROWS_PER_PAGE",
+        "source_line": 1,
+        "target_line": 2,
+        "source_value": "1",
+        "target_value": "5"
+      },
+      {
+        "type": "MOVED_AND_MODIFIED",
+        "key": "accissues",
+        "source_line": 5,
+        "target_line": 4,
+        "source_value": "Issues",
+        "target_value": "Issues & Findings"
+      },
+      {
+        "type": "MOVED",
+        "key": "accreportDetails",
+        "source_line": 4,
+        "target_line": 5,
+        "source_value": "Report Details",
+        "target_value": "Report Details"
+      },
+      {
+        "type": "MOVED",
+        "key": "tSubmit",
+        "source_line": 78,
+        "target_line": 79,
+        "source_value": "Submit",
+        "target_value": "Submit"
+      },
+      {
+        "type": "MOVED",
+        "key": "txSubmit",
+        "source_line": 79,
+        "target_line": 78,
+        "source_value": "Sends the content to the server for further processing",
+        "target_value": "Sends the content to the server for further processing"
+      }
+    ],
+    "summary": {
+      "added": 5,
+      "deleted": 0,
+      "modified": 1,
+      "moved": 5,
+      "moved_and_modified": 1
+    }
+  },
+  "change_types_explanation": {
+    "ADDED": "Property exists in target but not in source",
+    "DELETED": "Property exists in source but not in target",
+    "MODIFIED": "Same key, different value, same line position",
+    "MOVED": "Same key and value, different line numbers",
+    "MOVED_AND_MODIFIED": "Same key, different value, different line numbers"
+  },
+  "output_format": {
+    "description": "The diff output is a JSON object containing:",
+    "source_file": "Path to the source property file",
+    "target_file": "Path to the target property file",
+    "changes": "Array of change objects, each containing:",
+    "change_object": {
+      "type": "One of: ADDED, DELETED, MODIFIED, MOVED, MOVED_AND_MODIFIED",
+      "key": "The property key",
+      "source_line": "Line number in source file (null for ADDED)",
+      "target_line": "Line number in target file (null for DELETED)",
+      "source_value": "Value in source file (null for ADDED)",
+      "target_value": "Value in target file (null for DELETED)"
+    },
+    "summary": {
+      "added": "Count of added properties",
+      "deleted": "Count of deleted properties",
+      "modified": "Count of modified properties",
+      "moved": "Count of moved properties",
+      "moved_and_modified": "Count of moved and modified properties"
+    }
+  }
+}
