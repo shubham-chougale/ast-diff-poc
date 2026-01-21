@@ -65,7 +65,9 @@ class NodeMatcher:
     def _match_by_key(self) -> None:
         """Match remaining nodes by key only (for modified values)."""
         source_unmatched = [
-            node for node in self.source_ast.nodes if node not in self._matching
+            node 
+            for node in self.source_ast.nodes 
+            if node not in self._matching
         ]
         target_unmatched = [
             node

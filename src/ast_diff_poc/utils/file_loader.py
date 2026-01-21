@@ -1,8 +1,5 @@
 """File loading utilities for property files."""
 
-from pathlib import Path
-from typing import Optional
-
 from ..models.ast_node import PropertyFileAST
 from ..parser.ast_parser import PropertyParser
 

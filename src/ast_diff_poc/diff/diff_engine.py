@@ -87,6 +87,9 @@ class DiffEngine:
                 )
             )
 
+        # Sort changes by source_line number (None values go to the end)
+        changes.sort(key=lambda c: (c.source_line is None, c.source_line or 0))
+
         # Create result
         result = DiffResult(
             source_file=source_ast.file_path or "source",

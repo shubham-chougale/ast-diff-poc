@@ -1,0 +1,150 @@
+"""Controller for handling diff API requests."""
+
+from typing import Optional
+from fastapi import UploadFile, HTTPException, status
+from ...models.diff_result import DiffResult
+from ..schemas.diff_schemas import (
+    DiffRequest,
+    DiffResponse,
+    DiffChangeSchema,
+    DiffSummarySchema,
+    HealthResponse,
+)
+from ..services.diff_service import DiffService
+
+
+class DiffController:
+    """Controller for diff-related API endpoints."""
+
+    def __init__(self, service: Optional[DiffService] = None):
+        """Initialize the diff controller.
+
+        Args:
+            service: Optional diff service. If not provided, a new one is created.
+        """
+        self.service = service or DiffService()
+
+    def compute_diff_from_content(self, request: DiffRequest) -> DiffResponse:
+        """Handle diff computation from content strings.
+
+        Args:
+            request: Diff request containing source and target content.
+
+        Returns:
+            DiffResponse with computed changes.
+
+        Raises:
+            HTTPException: If the request is invalid or processing fails.
+        """
+        try:
+            result = self.service.compute_diff_from_content(
+                source_content=request.source_content,
+                target_content=request.target_content,
+                normalize=request.normalize,
+                source_file_name=request.source_file_name,
+                target_file_name=request.target_file_name,
+            )
+
+            return self._convert_to_response(result)
+        except ValueError as e:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Invalid property file content: {str(e)}",
+            )
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Error computing diff: {str(e)}",
+            )
+
+    async def compute_diff_from_files(
+        self,
+        source_file: UploadFile,
+        target_file: UploadFile,
+        normalize: bool = True,
+    ) -> DiffResponse:
+        """Handle diff computation from uploaded files.
+
+        Args:
+            source_file: Uploaded source property file.
+            target_file: Uploaded target property file.
+            normalize: Whether to normalize ASTs before comparison.
+
+        Returns:
+            DiffResponse with computed changes.
+
+        Raises:
+            HTTPException: If the files are invalid or processing fails.
+        """
+        try:
+            # Read file contents
+            source_bytes = await source_file.read()
+            target_bytes = await target_file.read()
+
+            # Compute diff
+            result = self.service.compute_diff_from_bytes(
+                source_bytes=source_bytes,
+                target_bytes=target_bytes,
+                normalize=normalize,
+                source_file_name=source_file.filename,
+                target_file_name=target_file.filename,
+            )
+
+            return self._convert_to_response(result)
+        except ValueError as e:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Invalid property file: {str(e)}",
+            )
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Error computing diff: {str(e)}",
+            )
+
+    def get_health(self) -> HealthResponse:
+        """Get API health status.
+
+        Returns:
+            HealthResponse with service status.
+        """
+        return HealthResponse(status="healthy", version="1.0.0")
+
+    def _convert_to_response(self, result: DiffResult) -> DiffResponse:
+        """Convert DiffResult to DiffResponse schema.
+
+        Args:
+            result: DiffResult from service.
+
+        Returns:
+            DiffResponse schema object.
+        """
+        # Convert changes
+        changes = [
+            DiffChangeSchema(
+                type=change.change_type.value,
+                key=change.key,
+                source_line=change.source_line,
+                target_line=change.target_line,
+                source_value=change.source_value,
+                target_value=change.target_value,
+                message=change.message,
+            )
+            for change in result.changes
+        ]
+
+        # Convert summary
+        summary = DiffSummarySchema(
+            added=result.summary.added,
+            deleted=result.summary.deleted,
+            modified=result.summary.modified,
+            moved=result.summary.moved,
+            moved_and_modified=result.summary.moved_and_modified,
+        )
+
+        return DiffResponse(
+            source_file=result.source_file,
+            target_file=result.target_file,
+            changes=changes,
+            summary=summary,
+        )

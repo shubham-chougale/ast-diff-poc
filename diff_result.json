@@ -1,0 +1,301 @@
+﻿{
+    "source_file":  "source.properties",
+    "target_file":  "target.properties",
+    "changes":  [
+                    {
+                        "type":  "DELETED",
+                        "key":  "DOC_MULTIROW_NUMBER_OF_ROWS_PER_PAGE",
+                        "source_line":  6,
+                        "target_line":  null,
+                        "source_value":  "1",
+                        "target_value":  null,
+                        "message":  null
+                    },
+                    {
+                        "type":  "MOVED",
+                        "key":  "tabDetails",
+                        "source_line":  10,
+                        "target_line":  8,
+                        "source_value":  "Details",
+                        "target_value":  "Details",
+                        "message":  "Moved as part of refactoring - check line 8"
+                    },
+                    {
+                        "type":  "MODIFIED",
+                        "key":  "tabControlTests",
+                        "source_line":  11,
+                        "target_line":  10,
+                        "source_value":  "Control Tests",
+                        "target_value":  "Control Tests \u0026 Validations",
+                        "message":  null
+                    },
+                    {
+                        "type":  "MOVED",
+                        "key":  "accAuditDetails",
+                        "source_line":  38,
+                        "target_line":  36,
+                        "source_value":  "Audit Details",
+                        "target_value":  "Audit Details",
+                        "message":  "Moved as part of refactoring - check line 36"
+                    },
+                    {
+                        "type":  "MOVED",
+                        "key":  "alertActOnDeleteNode",
+                        "source_line":  50,
+                        "target_line":  48,
+                        "source_value":  "You do not have the privilege to delete an Action.",
+                        "target_value":  "You do not have the privilege to delete an Action.",
+                        "message":  "Moved as part of refactoring - check line 48"
+                    },
+                    {
+                        "type":  "MODIFIED",
+                        "key":  "alertTaskStartDate2",
+                        "source_line":  67,
+                        "target_line":  66,
+                        "source_value":  "Actual Start Date should  be on or before the Actual End Date.",
+                        "target_value":  "Actual Start Date should be on or before the Actual End Date.",
+                        "message":  null
+                    },
+                    {
+                        "type":  "MODIFIED",
+                        "key":  "alertMarkForDeletion",
+                        "source_line":  86,
+                        "target_line":  85,
+                        "source_value":  "Issues marked for deletion will be removed from Draft Issues.",
+                        "target_value":  "Issues marked for deletion will be removed from Draft Issues after workpaper approval.",
+                        "message":  null
+                    },
+                    {
+                        "type":  "MOVED",
+                        "key":  "alertFNOwnerOrganization",
+                        "source_line":  92,
+                        "target_line":  90,
+                        "source_value":  "To enter a value in this field, an input is mandatory in the following field:",
+                        "target_value":  "To enter a value in this field, an input is mandatory in the following field:",
+                        "message":  "Moved as part of refactoring - check line 90"
+                    },
+                    {
+                        "type":  "MOVED",
+                        "key":  "rptControlRefrences",
+                        "source_line":  128,
+                        "target_line":  126,
+                        "source_value":  "Select Control Refrences",
+                        "target_value":  "Select Control Refrences",
+                        "message":  "Moved as part of refactoring - check line 126"
+                    },
+                    {
+                        "type":  "MOVED",
+                        "key":  "ControlLink",
+                        "source_line":  167,
+                        "target_line":  165,
+                        "source_value":  "View Control",
+                        "target_value":  "View Control",
+                        "message":  "Moved as part of refactoring - check line 165"
+                    },
+                    {
+                        "type":  "MOVED",
+                        "key":  "txSubmit",
+                        "source_line":  184,
+                        "target_line":  182,
+                        "source_value":  "Sends the content to the server for further processing",
+                        "target_value":  "Sends the content to the server for further processing",
+                        "message":  "Moved as part of refactoring - check line 182"
+                    },
+                    {
+                        "type":  "MOVED",
+                        "key":  "label_approve",
+                        "source_line":  241,
+                        "target_line":  238,
+                        "source_value":  "Approve",
+                        "target_value":  "Approve",
+                        "message":  "Moved as part of refactoring - check line 238"
+                    },
+                    {
+                        "type":  "MOVED",
+                        "key":  "invalidRowMessage",
+                        "source_line":  293,
+                        "target_line":  303,
+                        "source_value":  "Control to be concluded.",
+                        "target_value":  "Control to be concluded.",
+                        "message":  "Moved as part of refactoring - check line 303"
+                    },
+                    {
+                        "type":  "MOVED_AND_MODIFIED",
+                        "key":  "__DIFF_TEST_HTML_ADDED",
+                        "source_line":  295,
+                        "target_line":  293,
+                        "source_value":  "\u003cdiv class=\"test-container\"\u003e\u003cspan\u003eSource-only HTML value\u003c/span\u003e\u003c/div\u003e",
+                        "target_value":  "\u003cdiv class=\"test-container\"\u003e\u003cspan\u003eTarget HTML value added for validation\u003c/span\u003e\u003c/div\u003e",
+                        "message":  "Moved and modified as part of refactoring - check line 293"
+                    },
+                    {
+                        "type":  "DELETED",
+                        "key":  "__DIFF_TEST_HTML_DELETED",
+                        "source_line":  297,
+                        "target_line":  null,
+                        "source_value":  "\u003cp class=\"error-msg\"\u003eYou do not have permission to delete this item.\u003c/p\u003e",
+                        "target_value":  null,
+                        "message":  null
+                    },
+                    {
+                        "type":  "MOVED_AND_MODIFIED",
+                        "key":  "__DIFF_TEST_HTML_MODIFIED",
+                        "source_line":  299,
+                        "target_line":  295,
+                        "source_value":  "\u003cdiv class=\"alert alert-warning\"\u003e\u003cstrong\u003eWarning:\u003c/strong\u003e Required fields are missing.\u003c/div\u003e",
+                        "target_value":  "\u003cdiv class=\"alert alert-danger\"\u003e\u003cstrong\u003eError:\u003c/strong\u003e Mandatory fields are missing.\u003c/div\u003e",
+                        "message":  "Moved and modified as part of refactoring - check line 295"
+                    },
+                    {
+                        "type":  "MOVED_AND_MODIFIED",
+                        "key":  "__DIFF_TEST_HTML_MOVED_AND_MODIFIED",
+                        "source_line":  303,
+                        "target_line":  297,
+                        "source_value":  "\u003csection class=\"audit-msg\"\u003e\u003ch3\u003eReview Stage\u003c/h3\u003e\u003cp\u003eAuditor cannot approve own workpaper.\u003c/p\u003e\u003c/section\u003e",
+                        "target_value":  "\u003csection class=\"audit-msg\"\u003e\u003ch3\u003eApproval Stage\u003c/h3\u003e\u003cp\u003eAuditor and approver must be different users.\u003c/p\u003e\u003c/section\u003e",
+                        "message":  "Moved and modified as part of refactoring - check line 297"
+                    },
+                    {
+                        "type":  "MOVED_AND_MODIFIED",
+                        "key":  "Key1",
+                        "source_line":  305,
+                        "target_line":  301,
+                        "source_value":  "#ssifkdbsdv",
+                        "target_value":  "#cskdnjvbvdf",
+                        "message":  "Moved and modified as part of refactoring - check line 301"
+                    },
+                    {
+                        "type":  "MOVED",
+                        "key":  "Key2",
+                        "source_line":  306,
+                        "target_line":  302,
+                        "source_value":  "Key is not attached",
+                        "target_value":  "Key is not attached",
+                        "message":  "Moved as part of refactoring - check line 302"
+                    },
+                    {
+                        "type":  "DELETED",
+                        "key":  "key3",
+                        "source_line":  307,
+                        "target_line":  null,
+                        "source_value":  "Hey 123",
+                        "target_value":  null,
+                        "message":  null
+                    },
+                    {
+                        "type":  "MOVED",
+                        "key":  "dublicateCRF1",
+                        "source_line":  308,
+                        "target_line":  306,
+                        "source_value":  "is ignored, as it is already related to this",
+                        "target_value":  "is ignored, as it is already related to this",
+                        "message":  "Moved as part of refactoring - check line 306"
+                    },
+                    {
+                        "type":  "MOVED",
+                        "key":  "dublicateCRF2",
+                        "source_line":  309,
+                        "target_line":  307,
+                        "source_value":  "records [",
+                        "target_value":  "records [",
+                        "message":  "Moved as part of refactoring - check line 307"
+                    },
+                    {
+                        "type":  "MOVED",
+                        "key":  "dublicateCRF3",
+                        "source_line":  310,
+                        "target_line":  305,
+                        "source_value":  "] are ignored as they are already related to this",
+                        "target_value":  "] are ignored as they are already related to this",
+                        "message":  "Moved as part of refactoring - check line 305"
+                    },
+                    {
+                        "type":  "MODIFIED",
+                        "key":  "__DIFF_TEST_HTML_ADDED",
+                        "source_line":  336,
+                        "target_line":  336,
+                        "source_value":  "\u003cdiv class=\"wp-container\"\u003e\u003cheader\u003e\u003ch2\u003eWorkpaper Review\u003c/h2\u003e\u003cspan\u003eStatus: \u003cem\u003eDraft\u003c/em\u003e\u003c/span\u003e\u003c/header\u003e\u003csection\u003e\u003carticle\u003e\u003cp\u003eUser \u003cstrong\u003eAuditor\u003c/strong\u003e initiated validation at \u003ctime\u003e10:45 AM\u003c/time\u003e.\u003c/p\u003e\u003cul\u003e\u003cli\u003eControl validation pending\u003c/li\u003e\u003cli\u003eSample size \u0026gt; 10\u003c/li\u003e\u003cli\u003eAsync queue inactive\u003c/li\u003e\u003c/ul\u003e\u003c/article\u003e\u003c/section\u003e\u003cfooter\u003e\u003cbutton\u003eSubmit\u003c/button\u003e\u003c/footer\u003e\u003c/div\u003e",
+                        "target_value":  "\u003cdiv class=\"wp-container\"\u003e\u003cheader\u003e\u003ch2\u003eWorkpaper Review\u003c/h2\u003e\u003cspan\u003eStatus: \u003cem\u003eSubmitted\u003c/em\u003e\u003c/span\u003e\u003c/header\u003e\u003csection\u003e\u003carticle\u003e\u003cp\u003eUser \u003cstrong\u003eAuditor\u003c/strong\u003e submitted validation at \u003ctime\u003e11:30 AM\u003c/time\u003e.\u003c/p\u003e\u003cul\u003e\u003cli\u003eControl validation complete\u003c/li\u003e\u003cli\u003eSample size \u0026gt; 25\u003c/li\u003e\u003cli\u003eAsync queue active\u003c/li\u003e\u003c/ul\u003e\u003c/article\u003e\u003c/section\u003e\u003cfooter\u003e\u003cbutton\u003eApprove\u003c/button\u003e\u003c/footer\u003e\u003c/div\u003e",
+                        "message":  null
+                    },
+                    {
+                        "type":  "DELETED",
+                        "key":  "__DIFF_TEST_HTML_DELETED",
+                        "source_line":  338,
+                        "target_line":  null,
+                        "source_value":  "\u003cdiv class=\"error-box\"\u003e\u003csvg\u003e\u003ccircle\u003e\u003c/circle\u003e\u003c/svg\u003e\u003cp\u003e\u003cstrong\u003eError:\u003c/strong\u003e Access denied due to insufficient privileges (Code: 403).\u003c/p\u003e\u003csmall\u003eContact \u003ca\u003eSystem Admin\u003c/a\u003e\u003c/small\u003e\u003c/div\u003e",
+                        "target_value":  null,
+                        "message":  null
+                    },
+                    {
+                        "type":  "MOVED_AND_MODIFIED",
+                        "key":  "__DIFF_TEST_HTML_MODIFIED",
+                        "source_line":  340,
+                        "target_line":  338,
+                        "source_value":  "\u003cdiv class=\"alert alert-warning\"\u003e\u003ch4\u003eValidation Warning\u003c/h4\u003e\u003cp\u003eMandatory fields missing: \u003cspan\u003eName\u003c/span\u003e, \u003cspan\u003eDate\u003c/span\u003e\u003c/p\u003e\u003cdetails\u003e\u003csummary\u003eClick for details\u003c/summary\u003e\u003cp\u003eEnsure all required inputs are provided before submission.\u003c/p\u003e\u003c/details\u003e\u003c/div\u003e",
+                        "target_value":  "\u003cdiv class=\"alert alert-danger\"\u003e\u003ch4\u003eValidation Error\u003c/h4\u003e\u003cp\u003eMandatory fields missing: \u003cspan\u003eName\u003c/span\u003e, \u003cspan\u003eDate\u003c/span\u003e, \u003cspan\u003eOwner\u003c/span\u003e\u003c/p\u003e\u003cdetails\u003e\u003csummary\u003eClick for details\u003c/summary\u003e\u003cp\u003eResolve all blocking issues before proceeding.\u003c/p\u003e\u003c/details\u003e\u003c/div\u003e",
+                        "message":  "Moved and modified as part of refactoring - check line 338"
+                    },
+                    {
+                        "type":  "MOVED_AND_MODIFIED",
+                        "key":  "__DIFF_TEST_HTML_MOVED_AND_MODIFIED",
+                        "source_line":  344,
+                        "target_line":  340,
+                        "source_value":  "\u003cdiv class=\"workflow-stage\"\u003e\u003ch3\u003eReview Stage\u003c/h3\u003e\u003cp\u003eAuditor validation completed.\u003c/p\u003e\u003cul\u003e\u003cli\u003eControls evaluated\u003c/li\u003e\u003cli\u003eTests pending\u003c/li\u003e\u003c/ul\u003e\u003cspan class=\"badge\"\u003eIN PROGRESS\u003c/span\u003e\u003c/div\u003e",
+                        "target_value":  "\u003cdiv class=\"workflow-stage\"\u003e\u003ch3\u003eApproval Stage\u003c/h3\u003e\u003cp\u003eAuditor and approver must be different users.\u003c/p\u003e\u003cul\u003e\u003cli\u003eControls evaluated\u003c/li\u003e\u003cli\u003eTests completed\u003c/li\u003e\u003c/ul\u003e\u003cspan class=\"badge\"\u003eBLOCKED\u003c/span\u003e\u003c/div\u003e",
+                        "message":  "Moved and modified as part of refactoring - check line 340"
+                    },
+                    {
+                        "type":  "ADDED",
+                        "key":  "alertFnIssueDueDate3",
+                        "source_line":  null,
+                        "target_line":  333,
+                        "source_value":  null,
+                        "target_value":  "Issue due date should be after the Action due date.",
+                        "message":  null
+                    },
+                    {
+                        "type":  "ADDED",
+                        "key":  "newAuditWorkflowEnabled",
+                        "source_line":  null,
+                        "target_line":  334,
+                        "source_value":  null,
+                        "target_value":  "true",
+                        "message":  null
+                    },
+                    {
+                        "type":  "ADDED",
+                        "key":  "legacyControlTestMode",
+                        "source_line":  null,
+                        "target_line":  335,
+                        "source_value":  null,
+                        "target_value":  "disabled",
+                        "message":  null
+                    },
+                    {
+                        "type":  "ADDED",
+                        "key":  "experimentalRiskMatrix",
+                        "source_line":  null,
+                        "target_line":  344,
+                        "source_value":  null,
+                        "target_value":  "beta",
+                        "message":  null
+                    },
+                    {
+                        "type":  "ADDED",
+                        "key":  "asyncValidationQueue",
+                        "source_line":  null,
+                        "target_line":  345,
+                        "source_value":  null,
+                        "target_value":  "enabled",
+                        "message":  null
+                    }
+                ],
+    "summary":  {
+                    "added":  5,
+                    "deleted":  4,
+                    "modified":  4,
+                    "moved":  13,
+                    "moved_and_modified":  6
+                }
+}
