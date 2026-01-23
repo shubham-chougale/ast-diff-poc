@@ -3,6 +3,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .routes.diff_routes import router as diff_router
+from .routes.complexity_routes import router as complexity_router
 
 # Create FastAPI app
 app = FastAPI(
@@ -24,6 +25,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(diff_router)
+app.include_router(complexity_router)
 
 # Root endpoint
 @app.get("/", tags=["root"])

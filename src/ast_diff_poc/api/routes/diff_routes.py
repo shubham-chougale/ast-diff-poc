@@ -52,6 +52,7 @@ async def compute_diff_from_files(
     source_file: UploadFile = File(..., description="Source property file"),
     target_file: UploadFile = File(..., description="Target property file"),
     normalize: bool = Form(True, description="Whether to normalize ASTs before comparison"),
+    calculate_complexity: bool = Form(False, description="Whether to calculate complexity scores for changes"),
 ) -> DiffResponse:
     """Compute diff between two uploaded property files.
 
@@ -59,10 +60,11 @@ async def compute_diff_from_files(
         source_file: Uploaded source property file.
         target_file: Uploaded target property file.
         normalize: Whether to normalize ASTs before comparison.
+        calculate_complexity: Whether to calculate complexity scores for changes.
 
     Returns:
         DiffResponse with computed changes and summary.
     """
     return await controller.compute_diff_from_files(
-        source_file, target_file, normalize
+        source_file, target_file, normalize, calculate_complexity
     )

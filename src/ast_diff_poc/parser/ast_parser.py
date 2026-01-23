@@ -1,15 +1,19 @@
 """Custom AST parser for Java-style .properties files."""
 
+import logging
 import re
 from pathlib import Path
 from typing import List, Optional
 
+from ..exceptions import ParsingException
 from ..models.ast_node import (
     CommentNode,
     EmptyLineNode,
     PropertyFileAST,
     PropertyNode,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class PropertyParser:
@@ -40,18 +44,32 @@ class PropertyParser:
 
         Returns:
             PropertyFileAST containing all parsed nodes.
+            
+        Raises:
+            FileNotFoundError: If the file does not exist.
+            ParsingException: If parsing fails.
         """
-        path = Path(file_path)
-        if not path.exists():
-            raise FileNotFoundError(f"Property file not found: {file_path}")
-
-        # Try UTF-8 first, fall back to ISO-8859-1 (common for Java properties)
         try:
-            content = path.read_text(encoding="utf-8")
-        except UnicodeDecodeError:
-            content = path.read_text(encoding="iso-8859-1")
+            path = Path(file_path)
+            if not path.exists():
+                raise FileNotFoundError(f"Property file not found: {file_path}")
 
-        return self.parse_string(content, file_path)
+            # Try UTF-8 first, fall back to ISO-8859-1 (common for Java properties)
+            try:
+                content = path.read_text(encoding="utf-8")
+            except UnicodeDecodeError:
+                logger.debug(f"UTF-8 decode failed for {file_path}, trying ISO-8859-1")
+                content = path.read_text(encoding="iso-8859-1")
+
+            return self.parse_string(content, file_path)
+        except FileNotFoundError:
+            raise
+        except Exception as e:
+            logger.error(f"Failed to parse file {file_path}: {str(e)}", exc_info=True)
+            raise ParsingException(
+                f"Failed to parse property file: {str(e)}",
+                file_path=file_path
+            ) from e
 
     def parse_string(self, content: str, file_path: Optional[str] = None) -> PropertyFileAST:
         """Parse a property file from a string.
@@ -62,107 +80,119 @@ class PropertyParser:
 
         Returns:
             PropertyFileAST containing all parsed nodes.
+            
+        Raises:
+            ParsingException: If parsing fails.
         """
-        lines = content.splitlines(keepends=False)
-        nodes: List[PropertyNode] = []
-        empty_lines: List[EmptyLineNode] = []
-        comments: List[CommentNode] = []
+        try:
+            logger.debug(f"Parsing content (length: {len(content)}, file: {file_path})")
+            lines = content.splitlines(keepends=False)
+            nodes: List[PropertyNode] = []
+            empty_lines: List[EmptyLineNode] = []
+            comments: List[CommentNode] = []
 
-        # Track continuation lines (lines ending with \)
-        continuation_buffer: List[str] = []
-        continuation_line_start = 0
+            # Track continuation lines (lines ending with \)
+            continuation_buffer: List[str] = []
+            continuation_line_start = 0
 
-        for line_num, line in enumerate(lines, start=1):
-            original_line = line
-            stripped = line.strip()
+            for line_num, line in enumerate(lines, start=1):
+                original_line = line
+                stripped = line.strip()
 
-            # Handle continuation lines
-            if continuation_buffer:
-                if line.endswith("\\"):
-                    # Continue building the value
+                # Handle continuation lines
+                if continuation_buffer:
+                    if line.endswith("\\"):
+                        # Continue building the value
+                        continuation_buffer.append(line.rstrip("\\").rstrip())
+                        continue
+                    else:
+                        # End of continuation, reconstruct the full line
+                        full_key_part = continuation_buffer[0]
+                        full_value_part = " ".join(continuation_buffer[1:]) + " " + line
+                        line = full_key_part + "=" + full_value_part
+                        line_num = continuation_line_start
+                        continuation_buffer = []
+
+                # Check for empty lines
+                if not stripped:
+                    empty_lines.append(EmptyLineNode(line_number=line_num))
+                    continue
+
+                # Check for comments
+                comment_match = self.COMMENT_PATTERN.match(line)
+                if comment_match:
+                    comments.append(
+                        CommentNode(line_number=line_num, content=comment_match.group(2).strip())
+                    )
+                    continue
+
+                # Check for continuation marker
+                if line.rstrip().endswith("\\"):
+                    if not continuation_buffer:
+                        continuation_line_start = line_num
                     continuation_buffer.append(line.rstrip("\\").rstrip())
                     continue
-                else:
-                    # End of continuation, reconstruct the full line
-                    full_key_part = continuation_buffer[0]
-                    full_value_part = " ".join(continuation_buffer[1:]) + " " + line
-                    line = full_key_part + "=" + full_value_part
-                    line_num = continuation_line_start
-                    continuation_buffer = []
 
-            # Check for empty lines
-            if not stripped:
-                empty_lines.append(EmptyLineNode(line_number=line_num))
-                continue
+                # Try to match property pattern
+                match = self.PROPERTY_PATTERN.match(line)
+                if match:
+                    (
+                        leading_ws,
+                        key,
+                        ws_before_sep,
+                        separator,
+                        ws_after_sep,
+                        value,
+                        trailing_ws,
+                    ) = match.groups()
 
-            # Check for comments
-            comment_match = self.COMMENT_PATTERN.match(line)
-            if comment_match:
-                comments.append(
-                    CommentNode(line_number=line_num, content=comment_match.group(2).strip())
-                )
-                continue
-
-            # Check for continuation marker
-            if line.rstrip().endswith("\\"):
-                if not continuation_buffer:
-                    continuation_line_start = line_num
-                continuation_buffer.append(line.rstrip("\\").rstrip())
-                continue
-
-            # Try to match property pattern
-            match = self.PROPERTY_PATTERN.match(line)
-            if match:
-                (
-                    leading_ws,
-                    key,
-                    ws_before_sep,
-                    separator,
-                    ws_after_sep,
-                    value,
-                    trailing_ws,
-                ) = match.groups()
-
-                # Unescape the key and value
-                key = self._unescape(key.strip())
-                value = self._unescape(value)
-
-                node = PropertyNode(
-                    line_number=line_num,
-                    key=key,
-                    value=value,
-                    raw_line=original_line,
-                    leading_whitespace=leading_ws,
-                    separator=separator,
-                    trailing_whitespace_before_value=ws_after_sep,
-                    trailing_whitespace_after_value=trailing_ws,
-                )
-                nodes.append(node)
-            else:
-                # Try to handle malformed lines (key without value)
-                # Some properties files have keys without values
-                if "=" in line or ":" in line:
-                    # Split on first = or :
-                    sep = "=" if "=" in line else ":"
-                    parts = line.split(sep, 1)
-                    key = self._unescape(parts[0].strip())
-                    value = self._unescape(parts[1].strip() if len(parts) > 1 else "")
+                    # Unescape the key and value
+                    key = self._unescape(key.strip())
+                    value = self._unescape(value)
 
                     node = PropertyNode(
                         line_number=line_num,
                         key=key,
                         value=value,
                         raw_line=original_line,
-                        separator=sep,
+                        leading_whitespace=leading_ws,
+                        separator=separator,
+                        trailing_whitespace_before_value=ws_after_sep,
+                        trailing_whitespace_after_value=trailing_ws,
                     )
                     nodes.append(node)
+                else:
+                    # Try to handle malformed lines (key without value)
+                    # Some properties files have keys without values
+                    if "=" in line or ":" in line:
+                        # Split on first = or :
+                        sep = "=" if "=" in line else ":"
+                        parts = line.split(sep, 1)
+                        key = self._unescape(parts[0].strip())
+                        value = self._unescape(parts[1].strip() if len(parts) > 1 else "")
 
-        return PropertyFileAST(
-            nodes=nodes,
-            empty_lines=empty_lines,
-            comments=comments,
-            file_path=file_path or self.file_path,
-        )
+                        node = PropertyNode(
+                            line_number=line_num,
+                            key=key,
+                            value=value,
+                            raw_line=original_line,
+                            separator=sep,
+                        )
+                        nodes.append(node)
+
+            logger.debug(f"Parsed {len(nodes)} property nodes, {len(empty_lines)} empty lines, {len(comments)} comments")
+            return PropertyFileAST(
+                nodes=nodes,
+                empty_lines=empty_lines,
+                comments=comments,
+                file_path=file_path or self.file_path,
+            )
+        except Exception as e:
+            logger.error(f"Failed to parse content: {str(e)}", exc_info=True)
+            raise ParsingException(
+                f"Failed to parse property file content: {str(e)}",
+                file_path=file_path
+            ) from e
 
     @staticmethod
     def _unescape(text: str) -> str:

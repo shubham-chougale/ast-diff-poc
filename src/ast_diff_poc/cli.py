@@ -30,12 +30,18 @@ from .utils.file_loader import load_property_file
     is_flag=True,
     help="Pretty-print JSON output",
 )
+@click.option(
+    "--no-complexity",
+    is_flag=True,
+    help="Disable complexity calculation",
+)
 def main(
     source_file: Path,
     target_file: Path,
     output: Optional[Path],
     no_normalize: bool,
     pretty: bool,
+    no_complexity: bool,
 ) -> None:
     """Compute AST-based diff between two property files.
 
@@ -48,11 +54,11 @@ def main(
         target_ast = load_property_file(str(target_file))
 
         # Compute diff
-        engine = DiffEngine(normalize=not no_normalize)
+        engine = DiffEngine(normalize=not no_normalize, calculate_complexity=not no_complexity)
         result = engine.compute_diff(source_ast, target_ast)
 
-        # Convert to dict
-        output_dict = result.to_dict()
+        # Convert to dict (exclude complexity for diff output)
+        output_dict = result.to_dict(exclude_complexity=True)
 
         # Output
         json_str = json.dumps(output_dict, indent=2 if pretty else None)
