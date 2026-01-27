@@ -17,6 +17,16 @@ class DiffChangeSchema(BaseModel):
                 "target_line": 5,
                 "source_value": "1.0.0",
                 "target_value": "2.0.0",
+                "keyword_changes": [
+                    {
+                        "old_token": "1.0.0",
+                        "new_token": "2.0.0",
+                        "old_start": 0,
+                        "old_end": 5,
+                        "new_start": 0,
+                        "new_end": 5
+                    }
+                ]
             }
         },
     )

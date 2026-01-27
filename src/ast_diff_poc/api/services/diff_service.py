@@ -236,7 +236,7 @@ class DiffService:
             try:
                 logger.debug(f"Parsing source bytes (length: {len(source_bytes)})")
                 source_ast = self.repository.parse_from_bytes(
-                    source_bytes, source_file_name, encoding
+                    source_bytes, source_file_name, encoding, normalize=normalize
                 )
             except UnicodeDecodeError as e:
                 logger.error(f"Failed to decode source bytes with encoding {encoding}: {str(e)}", exc_info=True)
@@ -254,7 +254,7 @@ class DiffService:
             try:
                 logger.debug(f"Parsing target bytes (length: {len(target_bytes)})")
                 target_ast = self.repository.parse_from_bytes(
-                    target_bytes, target_file_name, encoding
+                    target_bytes, target_file_name, encoding, normalize=normalize
                 )
             except UnicodeDecodeError as e:
                 logger.error(f"Failed to decode target bytes with encoding {encoding}: {str(e)}", exc_info=True)

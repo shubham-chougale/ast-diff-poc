@@ -98,8 +98,8 @@ class ComplexityService:
         Raises:
             ValueError: If either file cannot be decoded or parsed.
         """
-        source_ast = self.repository.parse_from_bytes(source_bytes, source_file_name, encoding)
-        target_ast = self.repository.parse_from_bytes(target_bytes, target_file_name, encoding)
+        source_ast = self.repository.parse_from_bytes(source_bytes, source_file_name, encoding, normalize=normalize)
+        target_ast = self.repository.parse_from_bytes(target_bytes, target_file_name, encoding, normalize=normalize)
 
         engine = DiffEngine(normalize=normalize, calculate_complexity=True)
         return engine.compute_diff(source_ast, target_ast)

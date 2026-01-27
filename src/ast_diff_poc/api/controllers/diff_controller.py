@@ -10,6 +10,7 @@ from ...exceptions import (
     TokenizationException,
 )
 from ...models.diff_result import DiffResult
+from ...models.change_types import ChangeType
 from ...utils.logger import get_logger
 from ..schemas.diff_schemas import (
     DiffRequest,
@@ -189,6 +190,14 @@ class DiffController:
             changes = []
             for change in result.changes:
                 try:
+                    # Only include keyword_changes for MODIFIED and MOVED_AND_MODIFIED types
+                    keyword_changes = None
+                    if change.keyword_changes is not None and change.change_type in (
+                        ChangeType.MODIFIED,
+                        ChangeType.MOVED_AND_MODIFIED
+                    ):
+                        keyword_changes = change.keyword_changes
+                    
                     changes.append(
                         DiffChangeSchema(
                             type=change.change_type.value,
@@ -197,7 +206,7 @@ class DiffController:
                             target_line=change.target_line,
                             source_value=change.source_value,
                             target_value=change.target_value,
-                            keyword_changes=change.keyword_changes,
+                            keyword_changes=keyword_changes,
                             message=change.message,
                         )
                     )

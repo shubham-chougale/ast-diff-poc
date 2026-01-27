@@ -24,7 +24,7 @@ class PropertyRepository:
         1. Normalize line endings (CRLF → LF)
         2. Trim whitespace around keys, =, and values
         3. Filter out empty lines and comments
-        4. Sort keys alphabetically
+        4. Preserve original key order (no sorting)
         5. Preserve values as-is
 
         Args:
@@ -75,7 +75,7 @@ class PropertyRepository:
         1. Normalize line endings (CRLF → LF)
         2. Trim whitespace around keys, =, and values
         3. Filter out empty lines and comments
-        4. Sort keys alphabetically
+        4. Preserve original key order (no sorting)
         5. Preserve values as-is
 
         Args:
@@ -126,7 +126,7 @@ class PropertyRepository:
         1. Normalize line endings (CRLF → LF)
         2. Trim whitespace around keys, =, and values
         3. Filter out empty lines and comments
-        4. Sort keys alphabetically
+        4. Preserve original key order (no sorting)
         5. Preserve values as-is
 
         Args:

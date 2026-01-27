@@ -18,7 +18,7 @@ class Normalizer:
     2. Ignore empty lines
     3. Ignore comment-only lines (#, !)
     4. Normalize line endings (CRLF → LF)
-    5. Sort keys alphabetically
+    5. Preserve original key order (no sorting)
     6. Preserve values as-is (HTML, special chars, escaped entities, numbers, case)
     """
 
@@ -30,7 +30,7 @@ class Normalizer:
         - Line ending normalization (CRLF → LF)
         - Whitespace trimming around keys and values
         - Filtering empty lines and comments
-        - Sorting by key alphabetically
+        - Preserving original key order (no sorting)
         
         Args:
             content: Raw file content.
@@ -85,10 +85,8 @@ class Normalizer:
                 # Step 7: Preserve value as-is (no modification to HTML, special chars, etc.)
                 key_value_pairs.append((key, value))
             
-            # Step 8: Sort keys alphabetically (case-sensitive)
-            key_value_pairs.sort(key=lambda x: x[0])
-            
-            logger.debug(f"Normalized to {len(key_value_pairs)} key-value pairs, sorted alphabetically")
+            # Step 8: Preserve original key order (no sorting)
+            logger.debug(f"Normalized to {len(key_value_pairs)} key-value pairs, preserving original order")
             
             # Step 9: Rebuild normalized content
             normalized_lines = [f"{key}={value}" for key, value in key_value_pairs]
@@ -107,14 +105,14 @@ class Normalizer:
         1. Extract all key-value pairs from AST
         2. Filter out empty lines and comments (already done by parser, but ensure)
         3. Trim whitespace around keys, separators, and values
-        4. Sort keys alphabetically
+        4. Preserve original key order (no sorting)
         5. Rebuild normalized AST
 
         Args:
             ast: The AST to normalize.
 
         Returns:
-            A new normalized AST with keys sorted alphabetically.
+            A new normalized AST with keys in original order.
 
         Raises:
             NormalizationException: If normalization fails.
@@ -141,10 +139,8 @@ class Normalizer:
                 # Store original line number along with key-value pair
                 key_value_pairs.append((normalized_key, normalized_value, node.line_number))
             
-            # Sort by key alphabetically (case-sensitive for now, can be made case-insensitive if needed)
-            key_value_pairs.sort(key=lambda x: x[0])
-            
-            logger.debug(f"Normalized to {len(key_value_pairs)} key-value pairs, sorted alphabetically")
+            # Preserve original key order (no sorting)
+            logger.debug(f"Normalized to {len(key_value_pairs)} key-value pairs, preserving original order")
             
             # Rebuild normalized nodes preserving original line numbers
             normalized_nodes: List[PropertyNode] = []
