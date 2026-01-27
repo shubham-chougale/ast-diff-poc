@@ -120,7 +120,10 @@ class DiffEngine:
                 )
 
             # Sort changes by source_line number (None values go to the end)
-            changes.sort(key=lambda c: (c.source_line is None, c.source_line or 0))
+            changes.sort(key=lambda c: (
+                c.source_line is None and c.target_line is None,
+                c.source_line if c.source_line is not None else (c.target_line or 0)
+            ))
             logger.debug(f"Total changes detected: {len(changes)}")
 
             # Calculate complexity if requested
@@ -134,15 +137,15 @@ class DiffEngine:
                     
                     # Calculate base structural complexity from changed properties only
                     # This is computed from all changed properties, not the entire file
-                    base_complexity = self.complexity_calculator._calculate_base_structural_complexity(
-                        changes
-                    )
+                    # **base_complexity = self.complexity_calculator._calculate_base_structural_complexity(
+                    #     changes
+                    # )
                     
                     # Apply change-type multipliers for each change
                     for change in changes:
                         try:
                             complexity_data = self.complexity_calculator.calculate_block_complexity(
-                                change, original_source_ast, original_target_ast, changes, base_complexity
+                                change, original_source_ast, original_target_ast, [change], None
                             )
                             change.complexity = BlockComplexity(
                                 structural_complexity=complexity_data["structural_complexity"],

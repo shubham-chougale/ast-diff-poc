@@ -250,11 +250,11 @@ class PropertyComplexityCalculator:
         Returns:
             Tuple of (risk_level, interpretation).
         """
-        if score <= 25:
+        if score <= 5:
             return ("Low", "Simple, stable, and easy to maintain")
-        elif score <= 50:
+        elif score <= 10:
             return ("Medium", "Moderate complexity; review recommended")
-        elif score <= 75:
+        elif score <= 20:
             return ("High", "Complex structure; refactoring advised")
         else:
             return ("Very High", "Critical complexity; high failure risk")
