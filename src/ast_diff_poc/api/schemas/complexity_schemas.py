@@ -1,30 +1,41 @@
 """Pydantic schemas for complexity API requests and responses."""
 
-from typing import Dict, List, Optional
+from typing import List, Optional
 from pydantic import BaseModel, Field
 
 
-class BlockComplexitySchema(BaseModel):
-    """Schema for block complexity metrics."""
+class MetricDetailSchema(BaseModel):
+    """Schema for a single metric with raw and weighted values."""
 
-    structural_complexity: float = Field(..., description="Normalized structural complexity score (0-100)")
-    change_type_multiplier: float = Field(..., description="Multiplier based on change type")
-    effective_complexity: float = Field(..., description="Final block complexity score")
-    risk_level: Optional[str] = Field(None, description="Risk level classification (Low, Medium, High, Very High)")
-    risk_interpretation: Optional[str] = Field(None, description="Interpretation of the risk level")
-    metrics: Dict = Field(..., description="Raw and normalized metrics")
+    raw: int = Field(..., description="Raw metric value")
+    weight: float = Field(..., description="Weight applied to this metric")
+    weighted: float = Field(..., description="Value after weight multiplication (raw × weight)")
 
 
-class ComplexityChangeSchema(BaseModel):
-    """Schema for a change with complexity metrics."""
+class BlockMetricsSchema(BaseModel):
+    """Schema for individual block metrics with weighted calculations."""
 
-    type: str = Field(..., description="Type of change")
+    key_count: MetricDetailSchema = Field(..., description="Number of keys metric")
+    max_depth: MetricDetailSchema = Field(..., description="Hierarchy depth metric")
+    duplicate_count: MetricDetailSchema = Field(..., description="Duplicate/override count metric")
+    loc: MetricDetailSchema = Field(..., description="Lines of code metric")
+
+
+class BlockDetailSchema(BaseModel):
+    """Schema for detailed block complexity information."""
+
     key: str = Field(..., description="Property key")
-    source_line: Optional[int] = Field(None, description="Line number in source file")
-    target_line: Optional[int] = Field(None, description="Line number in target file")
-    source_value: Optional[str] = Field(None, description="Value in source file")
-    target_value: Optional[str] = Field(None, description="Value in target file")
-    complexity: BlockComplexitySchema = Field(..., description="Complexity metrics for this change")
+    type: str = Field(..., description="Change type (ADDED, DELETED, MODIFIED, etc.)")
+    block_score: float = Field(..., description="Complexity score for this block")
+    metrics: BlockMetricsSchema = Field(..., description="Detailed metrics with weighted calculations")
+
+
+class SkippedBlockSchema(BaseModel):
+    """Schema for skipped blocks."""
+
+    key: str = Field(..., description="Property key")
+    type: str = Field(..., description="Change type")
+    reason: str = Field(..., description="Reason for skipping")
 
 
 class ComplexityRequest(BaseModel):
@@ -42,4 +53,10 @@ class ComplexityResponse(BaseModel):
 
     source_file: str = Field(..., description="Source file path or identifier")
     target_file: str = Field(..., description="Target file path or identifier")
-    changes: List[ComplexityChangeSchema] = Field(..., description="List of changes with complexity metrics")
+    total_complexity: float = Field(..., description="Sum of all block complexity scores")
+    risk_level: str = Field(..., description="Overall risk level classification")
+    risk_interpretation: str = Field(..., description="Interpretation of the overall risk")
+    blocks_calculated: int = Field(..., description="Number of blocks included in complexity calculation")
+    blocks_skipped: int = Field(..., description="Number of blocks skipped from calculation")
+    blocks: List[BlockDetailSchema] = Field(..., description="Detailed breakdown of calculated blocks")
+    skipped: List[SkippedBlockSchema] = Field(..., description="List of skipped blocks with reasons")

@@ -2,12 +2,13 @@
 
 from typing import Optional
 from fastapi import UploadFile, HTTPException, status
-from ...models.diff_result import DiffResult
 from ..schemas.complexity_schemas import (
     ComplexityRequest,
     ComplexityResponse,
-    ComplexityChangeSchema,
-    BlockComplexitySchema,
+    BlockDetailSchema,
+    BlockMetricsSchema,
+    MetricDetailSchema,
+    SkippedBlockSchema,
 )
 from ..services.complexity_service import ComplexityService
 
@@ -99,35 +100,66 @@ class ComplexityController:
                 detail=f"Error computing complexity: {str(e)}",
             )
 
-    def _convert_to_response(self, result: DiffResult) -> ComplexityResponse:
-        """Convert DiffResult to ComplexityResponse schema.
+    def _convert_to_response(self, result: dict) -> ComplexityResponse:
+        """Convert service result to ComplexityResponse schema.
 
         Args:
-            result: DiffResult from service with complexity data.
+            result: Dictionary result from complexity service.
 
         Returns:
             ComplexityResponse schema object.
         """
-        # Check if we have any changes with complexity data
-        if not result.changes or not any(change.complexity for change in result.changes):
-            raise ValueError("Complexity calculation failed - no complexity data found in changes")
+        # Convert blocks to schema objects with detailed metrics
+        blocks = []
+        for block_data in result.get("blocks", []):
+            metrics_data = block_data.get("metrics", {})
+            
+            # Build metrics with raw, weight, and weighted values
+            blocks.append(BlockDetailSchema(
+                key=block_data["key"],
+                type=block_data["type"],
+                block_score=block_data["block_score"],
+                metrics=BlockMetricsSchema(
+                    key_count=MetricDetailSchema(
+                        raw=metrics_data.get("key_count", {}).get("raw", 1),
+                        weight=metrics_data.get("key_count", {}).get("weight", 0.40),
+                        weighted=metrics_data.get("key_count", {}).get("weighted", 0.40),
+                    ),
+                    max_depth=MetricDetailSchema(
+                        raw=metrics_data.get("max_depth", {}).get("raw", 1),
+                        weight=metrics_data.get("max_depth", {}).get("weight", 0.30),
+                        weighted=metrics_data.get("max_depth", {}).get("weighted", 0.30),
+                    ),
+                    duplicate_count=MetricDetailSchema(
+                        raw=metrics_data.get("duplicate_count", {}).get("raw", 0),
+                        weight=metrics_data.get("duplicate_count", {}).get("weight", 0.20),
+                        weighted=metrics_data.get("duplicate_count", {}).get("weighted", 0.0),
+                    ),
+                    loc=MetricDetailSchema(
+                        raw=metrics_data.get("loc", {}).get("raw", 1),
+                        weight=metrics_data.get("loc", {}).get("weight", 0.10),
+                        weighted=metrics_data.get("loc", {}).get("weighted", 0.10),
+                    ),
+                ),
+            ))
 
-        changes = [
-            ComplexityChangeSchema(
-                type=change.change_type.value,
-                key=change.key,
-                source_line=change.source_line,
-                target_line=change.target_line,
-                source_value=change.source_value,
-                target_value=change.target_value,
-                complexity=BlockComplexitySchema(**change.complexity.to_dict()),
-            )
-            for change in result.changes
-            if change.complexity
-        ]
+        # Convert skipped to schema objects
+        skipped = []
+        for skip_data in result.get("skipped", []):
+            skipped.append(SkippedBlockSchema(
+                key=skip_data["key"],
+                type=skip_data["type"],
+                reason=skip_data["reason"],
+            ))
 
         return ComplexityResponse(
-            source_file=result.source_file,
-            target_file=result.target_file,
-            changes=changes,
+            source_file=result["source_file"],
+            target_file=result["target_file"],
+            total_complexity=result["total_complexity"],
+            risk_level=result["risk_level"],
+            risk_interpretation=result["risk_interpretation"],
+            blocks_calculated=result["blocks_calculated"],
+            blocks_skipped=result["blocks_skipped"],
+            blocks=blocks,
+            skipped=skipped,
         )

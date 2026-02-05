@@ -129,46 +129,47 @@ class DiffEngine:
             # Calculate complexity if requested
             if self.calculate_complexity and self.complexity_calculator:
                 try:
-                    logger.debug("Calculating complexity scores")
-                    # Store original ASTs before normalization for complexity calculation
-                    # (we need the original ASTs for context, but metrics are based on changed properties only)
-                    original_source_ast = source_ast
-                    original_target_ast = target_ast
+                    logger.debug("Calculating complexity scores using new block-based logic")
                     
-                    # Calculate base structural complexity from changed properties only
-                    # This is computed from all changed properties, not the entire file
-                    # **base_complexity = self.complexity_calculator._calculate_base_structural_complexity(
-                    #     changes
-                    # )
+                    # Calculate complexity for all blocks at once
+                    complexity_result = self.complexity_calculator.calculate_all_blocks_complexity(changes)
                     
-                    # Apply change-type multipliers for each change
+                    # Create lookup maps for blocks and skipped
+                    blocks_map = {block["key"]: block for block in complexity_result.get("blocks", [])}
+                    skipped_map = {skip["key"]: skip for skip in complexity_result.get("skipped", [])}
+                    
+                    # Apply complexity data to each change
                     for change in changes:
                         try:
-                            complexity_data = self.complexity_calculator.calculate_block_complexity(
-                                change, original_source_ast, original_target_ast, [change], None
-                            )
-                            change.complexity = BlockComplexity(
-                                structural_complexity=complexity_data["structural_complexity"],
-                                change_type_multiplier=complexity_data["change_type_multiplier"],
-                                effective_complexity=complexity_data["effective_complexity"],
-                                risk_level=complexity_data.get("risk_level"),
-                                risk_interpretation=complexity_data.get("risk_interpretation"),
-                                metrics=complexity_data["metrics"],
-                            )
+                            if change.key in blocks_map:
+                                block = blocks_map[change.key]
+                                change.complexity = BlockComplexity(
+                                    structural_complexity=block["block_score"],
+                                    change_type_multiplier=1.0,
+                                    effective_complexity=block["block_score"],
+                                    risk_level=None,
+                                    risk_interpretation=None,
+                                    metrics=block["metrics"],
+                                )
+                            elif change.key in skipped_map:
+                                # For skipped changes, set complexity to indicate skipped status
+                                skip = skipped_map[change.key]
+                                change.complexity = BlockComplexity(
+                                    structural_complexity=0.0,
+                                    change_type_multiplier=0.0,
+                                    effective_complexity=0.0,
+                                    risk_level="Skipped",
+                                    risk_interpretation=skip["reason"],
+                                    metrics={"key_count": 0, "max_depth": 0, "duplicate_count": 0, "loc": 0},
+                                )
                         except Exception as e:
-                            logger.warning(f"Failed to calculate complexity for change {change.key}: {str(e)}", exc_info=True)
+                            logger.warning(f"Failed to assign complexity for change {change.key}: {str(e)}", exc_info=True)
                             # Continue with other changes
 
-                    # Commented out: Calculate overall complexity
-                    # overall_complexity_data = self.complexity_calculator.calculate_overall_complexity(
-                    #     changes, original_source_ast, original_target_ast
-                    # )
-                    # overall_complexity = overall_complexity_data.get("overall_complexity")
-                    # overall_risk_level = overall_complexity_data.get("risk_level")
-                    # overall_risk_interpretation = overall_complexity_data.get("risk_interpretation")
-                    overall_complexity = None
-                    overall_risk_level = None
-                    overall_risk_interpretation = None
+                    # Set overall complexity from the sum of block scores
+                    overall_complexity = complexity_result.get("total_complexity")
+                    overall_risk_level = complexity_result.get("risk_level")
+                    overall_risk_interpretation = complexity_result.get("risk_interpretation")
                 except Exception as e:
                     logger.error(f"Complexity calculation failed: {str(e)}", exc_info=True)
                     # Continue without complexity
