@@ -53,7 +53,8 @@ class ComplexityResponse(BaseModel):
 
     source_file: str = Field(..., description="Source file path or identifier")
     target_file: str = Field(..., description="Target file path or identifier")
-    total_complexity: float = Field(..., description="Sum of all block complexity scores")
+    total_complexity: float = Field(..., description="Normalized complexity score (0-40 scale)")
+    total_complexity_raw: float = Field(..., description="Raw sum of all block complexity scores")
     risk_level: str = Field(..., description="Overall risk level classification")
     risk_interpretation: str = Field(..., description="Interpretation of the overall risk")
     blocks_calculated: int = Field(..., description="Number of blocks included in complexity calculation")

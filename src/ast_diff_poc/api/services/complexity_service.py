@@ -137,6 +137,7 @@ class ComplexityService:
             "source_file": diff_result.source_file,
             "target_file": diff_result.target_file,
             "total_complexity": complexity_result["total_complexity"],
+            "total_complexity_raw": complexity_result["total_complexity_raw"],
             "risk_level": complexity_result["risk_level"],
             "risk_interpretation": complexity_result["risk_interpretation"],
             "blocks_calculated": complexity_result["blocks_calculated"],

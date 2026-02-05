@@ -156,6 +156,7 @@ class ComplexityController:
             source_file=result["source_file"],
             target_file=result["target_file"],
             total_complexity=result["total_complexity"],
+            total_complexity_raw=result["total_complexity_raw"],
             risk_level=result["risk_level"],
             risk_interpretation=result["risk_interpretation"],
             blocks_calculated=result["blocks_calculated"],
